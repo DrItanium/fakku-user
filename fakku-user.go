@@ -11,12 +11,10 @@ import (
 var userName = flag.String("username", "", "The username to lookup")
 
 func main() {
+	//TODO: file bug report for the fact that user has uid attached to the end of it :(
 	flag.Parse()
-	//TODO: add support for grabbing beyond the first page
-	//TODO: add support for spitting out CLIPS style facts (template assertions
-	//or instances)
 	if *userName == "" {
-		fmt.Printf("ERROR: no username specified")
+		fmt.Println("ERROR: no username specified")
 	} else {
 		user, err := fakku.GetUserProfile(*userName)
 		if err != nil {
@@ -24,48 +22,25 @@ func main() {
 			fmt.Println("Something bad happened! Perhaps fakku is down?")
 		} else {
 			fmt.Printf("Username: %s\nUrl: %s\nRank: %s\n", user.Username, user.Url, user.Rank)
+			//TODO: file bug report that avatar link isn't working :(
 			fmt.Printf("Avatar\n\tURL: %s\n\tWidth: %d\n\tHeight: %d\n", user.Avatar, user.AvatarWidth, user.AvatarHeight)
-			regDate, err0 := time.Parse(time.UnixDate, string(user.RegistrationDate))
-			if err0 != nil {
-				fmt.Println(err0)
-				return
+			fmt.Printf("Registration date: %s\nLast visit: %s\n", time.Unix(int64(user.RegistrationDate), 0).String(), time.Unix(int64(user.LastVisit), 0).String())
+			fmt.Printf("Subscription count: %d\nNumber of posts: %d\nNumber of topics: %d\n", user.Subscribed, user.Posts, user.Topics)
+			//TODO: file bug report about user_timezone not existing
+			fmt.Printf("Number of comments: %d\nSignature: \"%s\"\n", user.Comments, user.Signature)
+			fmt.Printf("Reputation\n\tForum: %d\n\tComment: %d\n", user.ForumReputation, user.CommentReputation)
+			var hasGold, isOnline string
+			if user.Gold == 1 {
+				hasGold = "yes"
+			} else {
+				hasGold = "no"
 			}
-			lastVisit, err1 := time.Parse(time.UnixDate, string(user.LastVisit))
-			if err1 != nil {
-				fmt.Println(err1)
-				return
+			if user.Online == 1 {
+				isOnline = "yes"
+			} else {
+				isOnline = "no"
 			}
-			fmt.Printf("Registration date: %t\nLastVisit: %t\n", regDate, lastVisit)
+			fmt.Printf("Has Fakku Gold? %s\nIs online? %s\n", hasGold, isOnline)
 		}
-
 	}
-	/*
-		posts, err := fakku.GetUserProfile(*userName)
-		if err != nil {
-			fmt.Println(err)
-			fmt.Println("Something bad happened! Perhaps Fakku is down?")
-		}
-		for i := 0; i < int(posts.Total); i++ {
-			tmp := posts.Index[i]
-			switch tmp.(type) {
-			case fakku.Content:
-				content := tmp.(fakku.Content)
-				tags := content.Tags
-				fmt.Printf("%s - ", content.Name)
-				// print out the tags one after another in a form that can be easily
-				// grepped through
-				if len(tags) == 0 {
-					fmt.Printf("No tags!")
-				} else {
-					fmt.Printf("{ %s", tags[0].Attribute)
-					for j := 1; j < len(tags); j++ {
-						fmt.Printf(", %s", tags[j].Attribute)
-					}
-					fmt.Printf(" }")
-				}
-				fmt.Printf(" - %s", content.Url)
-				fmt.Println()
-			}
-		}
-	*/
 }
