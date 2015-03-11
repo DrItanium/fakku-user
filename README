@@ -1,0 +1,6 @@
+This tool accesses the fakku api to access user information
+
+To install this tool do the following:
+
+go get github.com/DrItanium/fakku-user
+
