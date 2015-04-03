@@ -20,7 +20,12 @@ func main() {
 			fmt.Println(err)
 			fmt.Println("Something bad happened! Perhaps fakku is down?")
 		} else {
-			fmt.Printf("Username: %s\nUrl: %s\nRank: %s\n", user.Username, user.Url, user.Rank)
+			url, err0 := user.Url()
+			if err0 != nil {
+				fmt.Println(err0)
+				return
+			}
+			fmt.Printf("Username: %s\nUrl: %s\nRank: %s\n", user.Username, url, user.Rank)
 			//TODO: file bug report that avatar link isn't working :(
 			fmt.Printf("Avatar\n\tURL: %s\n\tWidth: %d\n\tHeight: %d\n", user.Avatar, user.AvatarWidth, user.AvatarHeight)
 			fmt.Printf("Registration date: %s\nLast visit: %s\n", user.RegistrationDate(), user.LastVisit())
